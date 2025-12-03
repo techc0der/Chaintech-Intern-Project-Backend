@@ -44,6 +44,12 @@ async function sendOtpEmail(to, otp) {
     html,
   });
   console.log(
+    'from',
+    from,
+    html,
+    '| to:', to
+  );
+  console.log(
     'OTP email queued:',
     info.id,
     '| status:', info.object,
