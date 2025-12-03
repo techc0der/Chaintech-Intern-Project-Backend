@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const Otp = require('../models/Otp');
 const { sendOtpEmail } = require('../utils/mailer');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
@@ -36,6 +37,24 @@ async function createAndSendOtp(user) {
 
   return otpDoc;
 }
+
+router.put('/profile',authMiddleware, async (req, res) => {
+  try {
+    const { name } = req.body ?? {};
+    if (!name) return res.status(400).json({ message: 'Missing name' });
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.name = name;
+    await user.save();
+
+    return res.json({ user: user.toJSON() });
+  } catch (err) {
+    console.error('update profile error', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
 
 // POST /auth/register
 router.post('/register', async (req, res) => {
