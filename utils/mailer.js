@@ -29,7 +29,7 @@ const resendClient = new Resend(process.env.RESEND_API_KEY);
 //     console.log('MAIL SERVER READY');
 //   }
 // });
- 
+
 async function sendOtpEmail(to, otp) {
   const html = `
     <div>
@@ -43,7 +43,12 @@ async function sendOtpEmail(to, otp) {
     subject: 'Your verification code',
     html,
   });
-  console.log('OTP email queued:', info.messageId, 'to', to);
+  console.log(
+    'OTP email queued:',
+    info.id,
+    '| status:', info.object,
+    '| to:', to
+  );
   return info;
 }
 
