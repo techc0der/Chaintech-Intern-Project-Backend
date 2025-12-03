@@ -35,27 +35,39 @@ async function sendOtpEmail(to, otp) {
     <div>
       <p>Your verification code is <strong>${otp}</strong>.</p>
       <p>It expires in ${process.env.OTP_EXPIRES_MIN || 10} minutes.</p>
-  </div>
+    </div>
   `;
-  const info = await resendClient.emails.send({
-    from: process.env.EMAIL_FROM,
-    to,
-    subject: 'Your verification code',
-    html,
-  });
-  console.log(
-    'from',
-    from,
-    html,
-    '| to:', to
-  );
-  console.log(
-    'OTP email queued:',
-    info.id,
-    '| status:', info.object,
-    '| to:', to
-  );
-  return info;
+
+  // 1. DECLARE data and error variables in the function scope
+  let data;
+  let error;
+
+  try {
+    // 2. ASSIGN the result to the already declared variables
+    ({ data, error } = await resendClient.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: [to],
+      subject: 'Your verification code',
+      html,
+    }));
+
+    // Check for error returned by the Resend client
+    if (error) {
+      console.error('Resend email send error:', error);
+      // It's good practice to throw here if an email send error should stop execution
+      throw new Error(`Resend email error: ${error.message}`);
+    } else {
+      console.log('Resend email sent:', data);
+    }
+
+  }
+  catch (err) {
+    console.error('Resend email send error:', err);
+    throw err;
+  }
+
+  // 3. RETURN the data variable, which is now accessible
+  return data;
 }
 
 module.exports = { sendOtpEmail };

@@ -22,13 +22,13 @@ async function createAndSendOtp(user) {
   const expiresAt = new Date(Date.now() + (Number(process.env.OTP_EXPIRES_MIN || 10) * 60 * 1000));
   await Otp.updateMany({ user: user._id, used: false }, { used: true }).catch(() => { });
   const otpDoc = await Otp.create({ user: user._id, otpHash, expiresAt });
-
+ 
   // DEV: print OTP in console for testing (remove in production)
   console.log(`DEV OTP for ${user.email}: ${rawOtp}`);
 
   // try to send email; caller will log/send appropriate response if it fails
-  try {
-    await sendOtpEmail(user.email, rawOtp);
+  try { 
+    await sendOtpEmail(user.email, rawOtp); 
   } catch (err) {
     // propagate error up so caller can handle it (we also logged inside sendOtpEmail)
     throw err;
@@ -60,7 +60,7 @@ router.post('/register', async (req, res) => {
           user: user.toJSON(),
           userId: user._id,
           message: 'User exists but OTP email failed to send. Check server logs.',
-        });
+        }); 
       }
     } else {
       // create a new user
@@ -72,7 +72,7 @@ router.post('/register', async (req, res) => {
       try {
         await createAndSendOtp(user);
       } catch (mailErr) {
-        console.error('sendOtpEmail failed', mailErr);
+        console.log('sendOtpEmail failed', mailErr);
         return res.status(201).json({
           user: user.toJSON(),
           userId: user._id,

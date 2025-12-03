@@ -15,11 +15,11 @@ const PORT = process.env.PORT || 4000;
 // ✅ CORS MIDDLEWARE
 // --------------------
 app.use(cors({
-  origin: 'https://chaintech-intern-project-9yw8b7i5g-sandips-projects-3c083b46.vercel.app',   // your frontend URL
+  origin: 'https://chaintech-intern-project.vercel.app',   // your frontend URL
   credentials: true,                 // allow cookies / auth headers
 }));
 
-// --------------------
+// -------------------- 
 // Body parsers
 // --------------------
 app.use(express.json());
