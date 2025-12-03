@@ -1,30 +1,34 @@
 // utils/mailer.js
 const nodemailer = require('nodemailer');
+const resend = require('resend');
+const { Resend } = resend;
 
-const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
-const port = Number(process.env.EMAIL_PORT || 465);
-const user = process.env.EMAIL_USER;
-const pass = process.env.EMAIL_PASS;
+const resendClient = new Resend(process.env.RESEND_API_KEY);
 
-if (!user || !pass) {
-  console.warn('MAILER WARNING: EMAIL_USER or EMAIL_PASS not set in .env');
-}
+// const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+// const port = Number(process.env.EMAIL_PORT || 465);
+// const user = process.env.EMAIL_USER;
+// const pass = process.env.EMAIL_PASS;
 
-const transporter = nodemailer.createTransport({
-  host,
-  port,
-  secure: port === 465, // true for 465 (SSL), false for 587 (STARTTLS)
-  auth: { user, pass },
-  // optional: tls: { rejectUnauthorized: false } // use only for special cases
-});
+// if (!user || !pass) {
+//   console.warn('MAILER WARNING: EMAIL_USER or EMAIL_PASS not set in .env');
+// }
 
-transporter.verify((err, success) => {
-  if (err) {
-    console.error('MAIL TRANSPORT ERROR:', err);
-  } else {
-    console.log('MAIL SERVER READY');
-  }
-});
+// const transporter = nodemailer.createTransport({
+//   host, 
+//   port,
+//   secure: port === 465, // true for 465 (SSL), false for 587 (STARTTLS)
+//   auth: { user, pass },
+//   // optional: tls: { rejectUnauthorized: false } // use only for special cases
+// });
+
+// transporter.verify((err, success) => {
+//   if (err) {
+//     console.error('MAIL TRANSPORT ERROR:', err);
+//   } else {
+//     console.log('MAIL SERVER READY');
+//   }
+// });
  
 async function sendOtpEmail(to, otp) {
   const html = `
@@ -33,7 +37,7 @@ async function sendOtpEmail(to, otp) {
       <p>It expires in ${process.env.OTP_EXPIRES_MIN || 10} minutes.</p>
   </div>
   `;
-  const info = await transporter.sendMail({
+  const info = await resendClient.emails.send({
     from: process.env.EMAIL_FROM,
     to,
     subject: 'Your verification code',
