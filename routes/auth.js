@@ -36,13 +36,13 @@ async function createAndSendOtp(user) {
   }
 
   return otpDoc;
-}
+} 
 
 router.put('/profile',authMiddleware, async (req, res) => {
   try {
     const { name } = req.body ?? {};
     if (!name) return res.status(400).json({ message: 'Missing name' });
-
+    console.log('Updating profile for user:', req.user);
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 

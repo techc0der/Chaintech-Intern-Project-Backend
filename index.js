@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 4000;
 // --------------------
 app.use(cors({
   origin: 'https://chaintech-intern-project.vercel.app',   // your frontend URL
+                      
   credentials: true,                 // allow cookies / auth headers
 }));
 
